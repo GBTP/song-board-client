@@ -1,7 +1,7 @@
 import { reactive, watch } from 'vue'
 import type { TrackEntry, BoardState, BoardConfig } from '@/types/queue'
 import type { DanmakuMessage } from '@/types/danmaku'
-import type { SongEntry } from '@/types/song'
+import type { SearchResult } from '@/types/song'
 import { parseCommand, type ParsedCommand } from '@/core/command-parser'
 import { songDB } from '@/core/song-db'
 
@@ -87,7 +87,7 @@ function handleOrder(cmd: ParsedCommand): string {
 
   const allowedLevels = config.allowedLevels.length > 0 ? config.allowedLevels : undefined
 
-  let results
+  let results: SearchResult[]
   if (cmd.params.exactId) {
     const song = songDB.getSong(config.gameName, cmd.params.exactId)
     if (song) results = [{ song, score: 200, matchedField: 'id' as const }]

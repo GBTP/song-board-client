@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { state, config } from '@/stores/queue'
 
 const props = defineProps<{
