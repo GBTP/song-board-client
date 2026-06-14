@@ -43,6 +43,11 @@ async function refreshSongData() {
   await songDB.clearCache()
   await songDB.load(config.gameName)
 }
+
+function openCertUrl() {
+  const httpsUrl = settings.wsUrl.replace(/^wss:\/\//, 'https://')
+  window.open(httpsUrl, '_blank')
+}
 </script>
 
 <template>
@@ -58,6 +63,9 @@ async function refreshSongData() {
         <span>弹幕服务器地址</span>
         <input v-model="settings.wsUrl" placeholder="ws://your-server:3000" />
       </label>
+      <button v-if="settings.wsUrl.startsWith('wss://')" class="trust-cert-btn" @click="openCertUrl">
+        信任证书（首次连接需要）
+      </button>
     </section>
 
     <section class="settings-section">
@@ -267,6 +275,16 @@ async function refreshSongData() {
   color: #000;
   font-size: 12px;
   cursor: pointer;
+}
+.trust-cert-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 171, 64, 0.2);
+  color: #ffab40;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 4px;
 }
 .action-buttons {
   display: flex;
