@@ -5,6 +5,7 @@ import StatusBar from '@/components/StatusBar.vue'
 import SongQueue from '@/components/SongQueue.vue'
 import { WsClient } from '@/core/ws-client'
 import { handleDanmaku } from '@/stores/queue'
+import { handleGiftMessage } from '@/stores/gift'
 import { settings } from '@/stores/settings'
 import { songDB } from '@/core/song-db'
 import { maimaiAdapter } from '@/core/adapters/maimai'
@@ -24,7 +25,13 @@ onMounted(async () => {
 
   if (settings.wsUrl) {
     ws = new WsClient(settings.wsUrl)
-    ws.onMessage(handleDanmaku)
+    ws.onMessage((msg) => {
+      if (msg.type === 'gift') {
+        handleGiftMessage(msg)
+      } else {
+        handleDanmaku(msg)
+      }
+    })
     ws.onStatus((status) => (connected.value = status))
     ws.connect()
   }

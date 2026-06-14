@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { settings } from '@/stores/settings'
 import { config, state } from '@/stores/queue'
 import { songDB } from '@/core/song-db'
+import { resetBalances } from '@/stores/gift'
 
 const newAdminId = ref('')
 
@@ -99,6 +100,15 @@ async function refreshSongData() {
         <input type="checkbox" v-model="config.allowRepeat" />
         <span>允许重复点歌</span>
       </label>
+      <label class="checkbox-label">
+        <input type="checkbox" v-model="config.giftOrderEnabled" />
+        <span>开启礼物点歌（需送礼才能点歌）</span>
+      </label>
+      <label v-if="config.giftOrderEnabled">
+        <span>每次点歌消耗</span>
+        <input type="number" v-model.number="config.giftOrderCost" min="0" step="0.1" />
+        <span class="range-value">元</span>
+      </label>
     </section>
 
     <section class="settings-section">
@@ -137,6 +147,7 @@ async function refreshSongData() {
       <div class="action-buttons">
         <button @click="clearQueue">清空队列</button>
         <button @click="clearDone">清空已完成</button>
+        <button @click="resetBalances">重置礼物余额</button>
         <button @click="refreshSongData">刷新歌曲数据</button>
       </div>
     </section>

@@ -25,7 +25,10 @@ const coverUrl = songDB.getCoverUrl(config.gameName, props.track.songId)
       <span class="card-diff">{{ track.difficulty ?? '' }}</span>
       <span class="card-level">{{ track.level ?? '' }}</span>
     </div>
-    <div class="card-user">{{ track.orderedBy.nickname }}</div>
+    <div class="card-user">
+      <img v-if="track.orderedBy.avatar" :src="track.orderedBy.avatar" class="card-avatar" />
+      <span>{{ track.orderedBy.nickname }}</span>
+    </div>
     <button v-if="showFinish" class="card-finish-btn" @click="emit('finish', index)">✓</button>
   </div>
 </template>
@@ -86,6 +89,9 @@ const coverUrl = songDB.getCoverUrl(config.gameName, props.track.songId)
   color: #81c784;
 }
 .card-user {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   font-size: 9px;
   color: rgba(255, 255, 255, 0.5);
   margin-top: 2px;
@@ -93,6 +99,13 @@ const coverUrl = songDB.getCoverUrl(config.gameName, props.track.songId)
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.card-avatar {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 .card-finish-btn {
   position: absolute;

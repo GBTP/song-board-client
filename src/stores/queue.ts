@@ -4,6 +4,7 @@ import type { DanmakuMessage } from '@/types/danmaku'
 import type { SearchResult } from '@/types/song'
 import { parseCommand, type ParsedCommand } from '@/core/command-parser'
 import { songDB } from '@/core/song-db'
+import { deductBalance, getBalance } from '@/stores/gift'
 
 function loadJSON<T>(key: string, fallback: T): T {
   try {
@@ -30,6 +31,8 @@ export const config: BoardConfig = reactive(
     allowRepeat: false,
     adminIds: [],
     allowedLevels: [],
+    giftOrderEnabled: false,
+    giftOrderCost: 0,
   })
 )
 
@@ -145,11 +148,19 @@ function handleOrder(cmd: ParsedCommand): string {
       userId: cmd.source.userId,
       nickname: cmd.source.nickname,
       platform: cmd.source.platform,
+      avatar: cmd.source.avatar,
     },
     orderTime: Date.now(),
     difficulty,
     level,
     isPlaying: false,
+  }
+
+  if (config.giftOrderEnabled && config.giftOrderCost > 0) {
+    if (!deductBalance(cmd.source.userId, config.giftOrderCost)) {
+      const balance = getBalance(cmd.source.userId)
+      return `余额不足，点歌需要 ${config.giftOrderCost} 元（当前: ${balance} 元）`
+    }
   }
 
   state.trackList.push(track)

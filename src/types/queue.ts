@@ -8,6 +8,7 @@ export interface TrackEntry {
     userId: string
     nickname: string
     platform: string
+    avatar?: string
   }
   orderTime: number
   difficulty?: string
@@ -28,4 +29,6 @@ export interface BoardConfig {
   allowRepeat: boolean
   adminIds: string[]
   allowedLevels: string[]
+  giftOrderEnabled: boolean
+  giftOrderCost: number
 }
