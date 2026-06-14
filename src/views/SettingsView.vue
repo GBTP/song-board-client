@@ -160,6 +160,9 @@ async function refreshSongData() {
   padding: 16px;
   background: #1a1a2e;
   color: #eee;
+  overflow-y: auto;
+  position: fixed;
+  inset: 0;
 }
 .settings-header {
   display: flex;
