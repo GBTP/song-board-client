@@ -99,6 +99,8 @@ function sendDebug() {
   display: flex;
   flex-direction: column;
   padding: 6px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
   pointer-events: none;
 }
 .overlay-content > * {
