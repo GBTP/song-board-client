@@ -77,6 +77,14 @@ function openCertUrl() {
           <option value="user">前置</option>
         </select>
       </label>
+      <label>
+        <span>画面分辨率</span>
+        <select v-model="settings.cameraResolution">
+          <option value="480p">480p（省电）</option>
+          <option value="720p">720p（推荐）</option>
+          <option value="1080p">1080p（高清）</option>
+        </select>
+      </label>
     </section>
 
     <section class="settings-section">

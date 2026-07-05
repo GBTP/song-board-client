@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import CameraLayer from '@/components/CameraLayer.vue'
 import StatusBar from '@/components/StatusBar.vue'
 import SongQueue from '@/components/SongQueue.vue'
+import ToastNotify from '@/components/ToastNotify.vue'
 import { WsClient } from '@/core/ws-client'
 import { handleDanmaku } from '@/stores/queue'
 import { handleGiftMessage } from '@/stores/gift'
@@ -64,6 +65,7 @@ function sendDebug() {
 <template>
   <div class="overlay-view">
     <CameraLayer />
+    <ToastNotify />
     <div class="overlay-content" :style="{ opacity: settings.overlayOpacity }">
       <StatusBar :connected="connected" />
       <div v-if="loading" class="loading-text">加载歌曲数据中...</div>

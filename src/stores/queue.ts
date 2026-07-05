@@ -5,6 +5,7 @@ import type { SearchResult } from '@/types/song'
 import { parseCommand, type ParsedCommand } from '@/core/command-parser'
 import { songDB } from '@/core/song-db'
 import { deductBalance, getBalance } from '@/stores/gift'
+import { notify } from '@/stores/notify'
 
 function loadJSON<T>(key: string, fallback: T): T {
   try {
@@ -159,6 +160,7 @@ function handleOrder(cmd: ParsedCommand): string {
   if (config.giftOrderEnabled && config.giftOrderCost > 0) {
     if (!deductBalance(cmd.source.userId, config.giftOrderCost)) {
       const balance = getBalance(cmd.source.userId)
+      notify(`${cmd.source.nickname} 余额不足：当前 ${balance} 元，需要 ${config.giftOrderCost} 元`)
       return `余额不足，点歌需要 ${config.giftOrderCost} 元（当前: ${balance} 元）`
     }
   }
