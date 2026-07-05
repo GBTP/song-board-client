@@ -1,26 +1,28 @@
 import { reactive } from 'vue'
 import type { DanmakuMessage } from '@/types/danmaku'
 
+// 内部以"分"为单位存储，避免浮点运算
 const balances = reactive<Map<string, number>>(new Map())
 
-function round2(n: number): number {
-  return Math.round(n * 100) / 100
+function yuanToCents(yuan: number): number {
+  return Math.round(yuan * 100)
 }
 
 export function handleGiftMessage(msg: DanmakuMessage) {
   if (msg.type !== 'gift' || !msg.gift) return
   const current = balances.get(msg.userId) ?? 0
-  balances.set(msg.userId, round2(current + msg.gift.value))
+  balances.set(msg.userId, current + yuanToCents(msg.gift.value))
 }
 
 export function getBalance(userId: string): number {
-  return balances.get(userId) ?? 0
+  return (balances.get(userId) ?? 0) / 100
 }
 
-export function deductBalance(userId: string, amount: number): boolean {
+export function deductBalance(userId: string, amountYuan: number): boolean {
   const current = balances.get(userId) ?? 0
-  if (round2(current) < round2(amount)) return false
-  balances.set(userId, round2(current - amount))
+  const cost = yuanToCents(amountYuan)
+  if (current < cost) return false
+  balances.set(userId, current - cost)
   return true
 }
 
