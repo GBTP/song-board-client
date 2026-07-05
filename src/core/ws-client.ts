@@ -7,6 +7,7 @@ export class WsClient {
   private url: string
   private ws: WebSocket | null = null
   private reconnectTimer: number | null = null
+  private reconnectAttempts = 0
   private messageHandlers: Set<MessageHandler> = new Set()
   private statusHandlers: Set<StatusHandler> = new Set()
   private _connected = false
@@ -37,6 +38,7 @@ export class WsClient {
 
       this.ws.onopen = () => {
         this._connected = true
+        this.reconnectAttempts = 0
         this.notifyStatus(true)
         this.clearReconnectTimer()
       }
@@ -92,10 +94,12 @@ export class WsClient {
 
   private scheduleReconnect() {
     if (this.reconnectTimer !== null) return
+    const delay = Math.min(3000 * 2 ** this.reconnectAttempts, 60000)
+    this.reconnectAttempts++
     this.reconnectTimer = window.setTimeout(() => {
       this.reconnectTimer = null
       this.connect()
-    }, 3000)
+    }, delay)
   }
 
   private clearReconnectTimer() {

@@ -92,7 +92,10 @@ export class SongDB {
     if (this.indices.has(gameName)) return
     if (this.loading.has(gameName)) return this.loading.get(gameName)
 
-    const promise = this.doLoad(gameName)
+    const promise = this.doLoad(gameName).catch((err) => {
+      this.loading.delete(gameName)
+      throw err
+    })
     this.loading.set(gameName, promise)
     await promise
     this.loading.delete(gameName)

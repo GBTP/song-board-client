@@ -38,6 +38,7 @@ export const maimaiAdapter: GameAdapter = {
 
   async fetchSongs(): Promise<SongEntry[]> {
     const res = await fetch(`${API_BASE}/song/list`)
+    if (!res.ok) throw new Error(`获取歌曲列表失败: ${res.status}`)
     const data: { songs: LxnsSong[] } = await res.json()
 
     return data.songs.map((s) => {
@@ -60,6 +61,7 @@ export const maimaiAdapter: GameAdapter = {
 
   async fetchAliases(): Promise<Map<string, string[]>> {
     const res = await fetch(`${API_BASE}/alias/list`)
+    if (!res.ok) throw new Error(`获取别名列表失败: ${res.status}`)
     const data: { aliases: LxnsAlias[] } = await res.json()
 
     const map = new Map<string, string[]>()

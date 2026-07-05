@@ -11,12 +11,9 @@ import { settings } from '@/stores/settings'
 import { songDB } from '@/core/song-db'
 import { maimaiAdapter } from '@/core/adapters/maimai'
 import { config } from '@/stores/queue'
-import type { DanmakuMessage } from '@/types/danmaku'
 
 const connected = ref(false)
 const loading = ref(true)
-const debugInput = ref('')
-const debugResult = ref('')
 let ws: WsClient | null = null
 
 onMounted(async () => {
@@ -41,25 +38,6 @@ onMounted(async () => {
 onUnmounted(() => {
   ws?.disconnect()
 })
-
-function sendDebug() {
-  const text = debugInput.value.trim()
-  if (!text) return
-
-  const msg: DanmakuMessage = {
-    platform: 'qq',
-    userId: 'debug_user',
-    nickname: '测试用户',
-    content: text,
-    timestamp: Date.now(),
-  }
-
-  const result = handleDanmaku(msg)
-  debugResult.value = result ?? '(无匹配指令)'
-  debugInput.value = ''
-
-  setTimeout(() => { debugResult.value = '' }, 3000)
-}
 </script>
 
 <template>
@@ -70,19 +48,6 @@ function sendDebug() {
       <StatusBar :connected="connected" />
       <div v-if="loading" class="loading-text">加载歌曲数据中...</div>
       <SongQueue v-else />
-      <!-- Debug input -->
-      <div class="debug-bar">
-        <div v-if="debugResult" class="debug-result">{{ debugResult }}</div>
-        <div class="debug-input-row">
-          <input
-            v-model="debugInput"
-            class="debug-input"
-            placeholder="输入指令测试，如: 点歌 Oshama Scramble"
-            @keyup.enter="sendDebug"
-          />
-          <button class="debug-btn" @click="sendDebug">发送</button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -115,45 +80,5 @@ function sendDebug() {
   height: 80px;
   color: rgba(255, 255, 255, 0.6);
   font-size: 13px;
-}
-.debug-bar {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.debug-result {
-  font-size: 12px;
-  color: #4fc3f7;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-}
-.debug-input-row {
-  display: flex;
-  gap: 6px;
-}
-.debug-input {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 13px;
-  backdrop-filter: blur(4px);
-}
-.debug-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-.debug-btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #4fc3f7;
-  color: #000;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
 }
 </style>

@@ -79,13 +79,20 @@ export function handleDanmaku(msg: DanmakuMessage): string | null {
 }
 
 function handleOrder(cmd: ParsedCommand): string {
-  if (state.paused) return '点歌已暂停'
-  if (state.trackList.length >= config.maxQueueLength) return '点歌板已满'
+  if (state.paused) {
+    notify(`${cmd.source.nickname} 点歌失败：点歌已暂停`)
+    return '点歌已暂停'
+  }
+  if (state.trackList.length >= config.maxQueueLength) {
+    notify(`${cmd.source.nickname} 点歌失败：点歌板已满`)
+    return '点歌板已满'
+  }
 
   const userCount = state.trackList.filter(
     (t) => t.orderedBy.userId === cmd.source.userId
   ).length
   if (config.maxPerUser > 0 && userCount >= config.maxPerUser) {
+    notify(`${cmd.source.nickname} 点歌失败：每人最多点 ${config.maxPerUser} 首`)
     return `每人最多点 ${config.maxPerUser} 首`
   }
 
@@ -100,13 +107,19 @@ function handleOrder(cmd: ParsedCommand): string {
     results = songDB.search(config.gameName, cmd.params.keywords, 20, allowedLevels)
   }
 
-  if (results.length === 0) return '找不到相关歌曲'
+  if (results.length === 0) {
+    notify(`${cmd.source.nickname} 点歌失败：找不到「${cmd.params.keywords}」`)
+    return '找不到相关歌曲'
+  }
 
   const song = results[0].song
 
   if (!config.allowRepeat) {
     const exists = state.trackList.some((t) => t.songId === song.id)
-    if (exists) return '这首歌已在队列中'
+    if (exists) {
+      notify(`${cmd.source.nickname} 点歌失败：「${song.title}」已在队列中`)
+      return '这首歌已在队列中'
+    }
   }
 
   // Resolve difficulty and level
@@ -131,7 +144,10 @@ function handleOrder(cmd: ParsedCommand): string {
     for (let i = song.lvArr.length - 1; i >= 0; i--) {
       if (levelSet.has(song.lvArr[i])) { bestIdx = i; break }
     }
-    if (bestIdx === -1) return '该歌曲没有符合难度限制的谱面'
+    if (bestIdx === -1) {
+      notify(`${cmd.source.nickname} 点歌失败：「${song.title}」没有符合难度限制的谱面`)
+      return '该歌曲没有符合难度限制的谱面'
+    }
     difficulty = song.lvNameArr[bestIdx]
     level = song.lvArr[bestIdx]
   } else {
@@ -166,6 +182,7 @@ function handleOrder(cmd: ParsedCommand): string {
   }
 
   state.trackList.push(track)
+  notify(`${cmd.source.nickname} 点歌：${song.title} [${difficulty} ${level}]`)
   return `${song.title} [${difficulty} ${level}] 已加入 (第${state.trackList.length}首)`
 }
 
