@@ -174,6 +174,8 @@ function openCertUrl() {
 .settings-view {
   min-height: 100vh;
   padding: 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
   background: #1a1a2e;
   color: #eee;
   overflow-y: auto;
